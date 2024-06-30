@@ -12,15 +12,19 @@ export async function create(req: FastifyRequest, reply: FastifyReply) {
         title: z.string(),
         description: z.string().nullable(),
         phone: z.string().nullable(),
-        latitude: z.number().refine(value => { Math.abs(value) <= 90 }),
-        longitude: z.number().refine(value => { Math.abs(value) <= 180 })
+        latitude: z.number()
+            .refine(value => { return Math.abs(value) <= 90 }),
+        longitude: z.number()
+            .refine(value => { return Math.abs(value) <= 180 })
 
     })
 
     const { title, description, phone, latitude, longitude } = createGymBody.parse(req.body);
     const registerUseCase = makeRegisterGymUseCase()
-    await registerUseCase.execute({ title, description, phone, latitude, longitude })
+    const { gym } = await registerUseCase.execute({ title, description, phone, latitude, longitude })
 
 
-    return reply.status(201).send()
+    return reply.status(201).send({
+        id: gym.id
+    })
 }

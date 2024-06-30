@@ -12,7 +12,6 @@ export async function checkInMetrics(req: FastifyRequest, reply: FastifyReply) {
         userId: req.user.sub
     })
 
-
     return reply.status(200).send({
         metrics
     })

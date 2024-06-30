@@ -6,6 +6,8 @@ import { UserAlreadyExistsError } from "@/use-cases/errors/user_already_exists";
 import { makeRegisterUseCase } from "@/use-cases/factories/user/make_register_usecase";
 import { makeRegisterGymUseCase } from "@/use-cases/factories/gym/make_create_gym_usecase";
 import { makeCheckInUseCase } from "@/use-cases/factories/check_in/make_checkin_usecase";
+import { afterEach, beforeEach } from "node:test";
+import { vi } from 'vitest'
 
 export async function createCheckIn(req: FastifyRequest, reply: FastifyReply) {
 
@@ -14,8 +16,8 @@ export async function createCheckIn(req: FastifyRequest, reply: FastifyReply) {
     })
 
     const createCheckInBody = z.object({
-        latitude: z.number().refine(value => { Math.abs(value) <= 90 }),
-        longitude: z.number().refine(value => { Math.abs(value) <= 180 })
+        latitude: z.number().refine(value => { return Math.abs(value) <= 90 }),
+        longitude: z.number().refine(value => { return Math.abs(value) <= 180 })
 
     })
 
@@ -24,8 +26,10 @@ export async function createCheckIn(req: FastifyRequest, reply: FastifyReply) {
 
     const { latitude, longitude } = createCheckInBody.parse(req.body);
     const registerUseCase = makeCheckInUseCase()
-    await registerUseCase.execute({ gymId, userId: req.user.sub, userLatitude: latitude, userLongitude: longitude })
+    const { checkIn } = await registerUseCase.execute({ gymId, userId: req.user.sub, userLatitude: latitude, userLongitude: longitude })
 
 
-    return reply.status(201).send()
+    return reply.status(201).send({
+        checkIn
+    })
 }

@@ -25,8 +25,6 @@ export class GetUserMetricsUseCase {
     async execute({ userId }: GetUserMetricsUseCaseRequest) {
         const checkInsCount = await this.checkInsRepository.countByUserId(userId)
 
-
-        ///Calculate distance between user and gym
         return {
             checkInsCount
         }

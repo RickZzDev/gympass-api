@@ -13,6 +13,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ROLE {
+  ADMIN
+  MEMBER
+}
+
 //@ row modifier
 //@@ table modifier
 //Os dados em roxo nao serao criados como coluna, é apenas para o framework
@@ -22,6 +27,7 @@ model User {
   email         String    @unique
   password_hash String
   created_at    DateTime  @default(now())
+  role          ROLE      @default(MEMBER)
   CheckIns      CheckIn[] //camelCase pois aqui é código ts e nao coluna
 
   @@map("users")

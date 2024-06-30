@@ -4,6 +4,7 @@ import { app } from '@/app'
 
 import { describe } from 'vitest'
 import { serialize } from "v8";
+import { createAndAuthUser } from "@/utils/tests";
 
 describe('Profile (e2e)', () => {
 
@@ -16,19 +17,8 @@ describe('Profile (e2e)', () => {
     })
 
     it('Should be able get profile', async () => {
-        await request(app.server).post('/users').send({
-            name: 'John Doe',
-            email: 'johndoe@gmail.com',
-            password: '123456'
-        })
 
-        const authReponse = await request(app.server).post('/sessions').send({
-            email: 'johndoe@gmail.com',
-            password: '123456'
-        })
-
-        const { token } = authReponse.body
-
+        const { token } = await createAndAuthUser(app)
         const profileResponse = await request(app.server).get('/me').set('Authorization', `Bearer ${token}`).send()
 
         expect(profileResponse.statusCode).toEqual(200)

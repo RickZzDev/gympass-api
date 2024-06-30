@@ -6,7 +6,6 @@ export async function checkInHistory(req: FastifyRequest, reply: FastifyReply) {
 
     const checkInHistory = z.object({
         page: z.coerce.number().min(1).default(1)
-
     })
 
     const { page } = checkInHistory.parse(req.query);
